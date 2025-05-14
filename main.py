@@ -38,7 +38,7 @@ def background_loop():
                 print(f"🔄 Self-ping status: {r.status_code}")
         except Exception as e:
             print(f"Error in loop: {e}")
-        time.sleep(300)  # 5 minutes
+        time.sleep(600)  # 600 minutes
 
 @app.route('/')
 def home():
