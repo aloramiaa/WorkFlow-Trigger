@@ -13,6 +13,8 @@ REPO = "Eu-FarmBot"
 WORKFLOW_FILE = "farm.yml"
 REF = "main"
 
+RENDER_URL = os.environ.get("RENDER_URL")  # Add your Render app's URL here
+
 def trigger_workflow():
     url = f"https://api.github.com/repos/{OWNER}/{REPO}/actions/workflows/{WORKFLOW_FILE}/dispatches"
     headers = {
@@ -22,18 +24,29 @@ def trigger_workflow():
     data = {"ref": REF}
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 204:
-        print("✅ Workflow triggered")
+        print("✅ GitHub workflow triggered.")
     else:
-        print(f"❌ Failed: {response.status_code} - {response.text}")
+        print(f"❌ Failed to trigger: {response.status_code} - {response.text}")
 
 def background_loop():
     while True:
-        trigger_workflow()
+        try:
+            trigger_workflow()
+            if RENDER_URL:
+                ping_url = f"{RENDER_URL}/ping"
+                r = requests.get(ping_url)
+                print(f"🔄 Self-ping status: {r.status_code}")
+        except Exception as e:
+            print(f"Error in loop: {e}")
         time.sleep(300)  # 5 minutes
 
 @app.route('/')
 def home():
-    return "GitHub Workflow Trigger is running every 5 minutes."
+    return "🚀 Bot is running."
+
+@app.route('/ping')
+def ping():
+    return "pong", 200
 
 if __name__ == '__main__':
     threading.Thread(target=background_loop).start()
