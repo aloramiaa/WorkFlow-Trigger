@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: github-workflow-trigger
+    env: python
+    buildCommand: ""
+    startCommand: python main.py
+    envVars:
+      - key: GITHUB_TOKEN
+        value: YOUR_GITHUB_PAT_HERE
+    plan: free
